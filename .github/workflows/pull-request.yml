@@ -11,7 +11,7 @@ jobs:
   packages:
     name: Packages
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     outputs:
       awx: ${{ steps.changed-awx.outputs.changed == 'true' }}
       hub: ${{ steps.changed-hub.outputs.changed == 'true' }}
@@ -571,6 +571,11 @@ jobs:
           echo 'API_HOST=localhost' >> compose.env
           echo 'API_PORT=5001' >> compose.env
           echo 'API_PROTOCOL=http' >> compose.env
+          echo 'DJANGO_SUPERUSER_USERNAME=admin' >> compose.env
+          echo 'DJANGO_SUPERUSER_PASSWORD=admin' >> compose.env
+          echo 'PULP_GALAXY_API_PATH_PREFIX='\''/api/automation-hub/'\' >> compose.env
+          echo 'PULP_CSRF_TRUSTED_ORIGINS='\''["http://localhost:8002", "https://localhost:3002"]'\' >> compose.env
+          cat compose.env
       - name: 'oci-env compose build'
         if: steps.check.outputs.skip != 'true'
         working-directory: 'oci_env'
@@ -579,24 +584,71 @@ jobs:
         if: steps.check.outputs.skip != 'true'
         working-directory: 'oci_env'
         run: oci-env compose up -d
+      - name: wait for API be available
+        env:
+          API_HUB_SERVER_URL: http://localhost:5001/api/automation-hub/_ui/v1/feature-flags/
+          API_HUB_LOGIN_URL: http://localhost:5001/api/automation-hub/_ui/v1/auth/login/
+        run: |
+          set +e
+          sleep 60
+          MAX_ATTEMPTS=6000
+          DELAY_BETWEEN_ATTEMPTS=10
+          TIMEOUT_REACHED=false
+          http_status_code=0
+          for ((i = 0; i < MAX_ATTEMPTS; i++)); do
+            response=$(curl -f -s "$API_HUB_SERVER_URL" || true)
+            echo "API response: $response"
+            if [ -z "$response" ]; then
+              echo "API returned an empty response. Retrying."
+              sleep "$DELAY_BETWEEN_ATTEMPTS"
+            else
+              echo "API returned a non-empty response. Checking status code."
+              api_response=$(curl -v -w "%{http_code}" "$API_HUB_SERVER_URL" || true)
+              echo "API response: $api_response"
+              http_status_code=$(echo "$api_response" | grep -oE '[0-9]{3}')
+              echo "API status code: $http_status_code"
+              if [ "$http_status_code" -eq 200 ]; then
+                echo "API returned a 200 status code. API is running."
+                login_response=$(curl -v -u admin:admin $API_HUB_LOGIN_URL)
+                echo "Login response: $login_response"
+                break
+              else
+                echo "API returned a non-200 status code. API is not running. Retrying."
+                sleep "$DELAY_BETWEEN_ATTEMPTS"
+              fi 
+            fi
+          done
+          if [ "$http_status_code" -ne 200 ]; then
+            TIMEOUT_REACHED=true
+            echo "HUB API did not return a 200 status code after $MAX_ATTEMPTS attempts."
+          fi
+          if [ "$TIMEOUT_REACHED" = true ]; then
+            echo "Exiting the workflow."
+            exit 1
+          fi
       - name: Cypress
         if: steps.check.outputs.skip != 'true'
         uses: cypress-io/github-action@v5
         with:
           install: false
-          start: docker run -d -e LOG_LEVEL=none -p 3002:3002 -e PORT=3002 ansible-ui
+          start: docker run -d -e LOG_LEVEL=debug -p 3002:3002 -e PORT=3002 ansible-ui
           wait-on: 'https://localhost:3002'
           record: true
           parallel: true
           config: specPattern=cypress/e2e/hub/**/*.cy.{js,jsx,ts,tsx}
         env:
-          CYPRESS_HUB_SERVER: http://localhost:5001
+          CYPRESS_HUB_SERVER: http://localhost:5001/
           CYPRESS_HUB_USERNAME: admin
-          CYPRESS_HUB_PASSWORD: password
+          CYPRESS_HUB_PASSWORD: admin
+          DEBUG: 'cypress:*'
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_AUI_HUB_E2E_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_AUI_HUB_E2E_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_TLS_REJECT_UNAUTHORIZED: 0
+      - name: Kill container, show debug info
+        if: always()
+        working-directory: 'oci_env'
+        run: oci-env compose logs && oci-env compose kill
       - name: 'oci-env compose down'
         if: steps.check.outputs.skip != 'true'
         working-directory: 'oci_env'

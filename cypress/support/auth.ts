@@ -1,14 +1,24 @@
 import { randomString } from '../../framework/utils/random-string';
 import { AutomationServerType } from '../../frontend/automation-servers/AutomationServer';
+import { SERVER_NAME } from './constants';
 
 Cypress.Commands.add(
   'login',
   (server: string, username: string, password: string, serverType: AutomationServerType) => {
     window.localStorage.setItem('theme', 'light');
     window.localStorage.setItem('disclaimer', 'true');
-
     if (Cypress.env('TEST_STANDALONE') === true) {
-      if (serverType === AutomationServerType.EDA) {
+      // Standalone HUB login
+      if (serverType === AutomationServerType.HUB) {
+        cy.visit(`/`, {
+          retryOnStatusCodeFailure: true,
+          retryOnNetworkFailure: true,
+        });
+        cy.typeInputByLabel(/^Username$/, username);
+        cy.typeInputByLabel(/^Password$/, password);
+        cy.get('button[type=submit]').click();
+        return;
+      } else if (serverType === AutomationServerType.EDA) {
         // Standalone EDA login
         cy.visit(`/login`, {
           retryOnStatusCodeFailure: true,
@@ -38,16 +48,19 @@ Cypress.Commands.add(
     });
 
     cy.clickButton(/^Add automation server$/);
-    const automationServerName = 'E2E ' + randomString(4);
+    const automationServerName = `E2E ${serverType} ${randomString(4)}`;
     cy.getDialog().within(() => {
       cy.typeInputByLabel(/^Name$/, automationServerName);
       cy.typeInputByLabel(/^Url$/, server);
       switch (serverType) {
         case AutomationServerType.AWX:
-          cy.selectDropdownOptionByLabel(/^Automation type$/, 'AWX Ansible Server');
+          cy.selectDropdownOptionByLabel(/^Automation type$/, SERVER_NAME.AWX_SERVER);
           break;
         case AutomationServerType.EDA:
-          cy.selectDropdownOptionByLabel(/^Automation type$/, 'Event Driven Automation Server');
+          cy.selectDropdownOptionByLabel(/^Automation type$/, SERVER_NAME.EDA_SERVER);
+          break;
+        case AutomationServerType.HUB:
+          cy.selectDropdownOptionByLabel(/^Automation type$/, SERVER_NAME.HUB_SERVER);
           break;
         default:
           cy.selectDropdownOptionByLabel(/^Automation type$/, 'AWX Ansible Server');
@@ -113,4 +126,26 @@ Cypress.Commands.add('edaLogin', () => {
     }
   );
   cy.visit(`/eda`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
+});
+
+Cypress.Commands.add('hubLogin', () => {
+  cy.session(
+    'HUB',
+    () => {
+      cy.login(
+        Cypress.env('HUB_SERVER') as string,
+        Cypress.env('HUB_USERNAME') as string,
+        Cypress.env('HUB_PASSWORD') as string,
+        AutomationServerType.HUB
+      );
+      cy.hasTitle('Welcome to');
+    },
+    {
+      cacheAcrossSpecs: true,
+      validate: () => {
+        cy.request({ method: 'GET', url: 'api/automation-hub/_ui/v1/me/' });
+      },
+    }
+  );
+  cy.visit(`/`, { retryOnStatusCodeFailure: true, retryOnNetworkFailure: true });
 });
