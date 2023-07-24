@@ -1,6 +1,6 @@
 function apiTag(strings: TemplateStringsArray, ...values: string[]) {
   if (strings[0]?.[0] !== '/') {
-    throw 'Invalid URL';
+    throw new Error('Invalid URL');
   }
 
   let url = '';
