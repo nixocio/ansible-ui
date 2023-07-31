@@ -8,7 +8,7 @@ import {
 
 import { FilterIcon } from '@patternfly/react-icons';
 import { Dispatch, SetStateAction, useState } from 'react';
-import { PageSingleSelect } from '../../PageInputs/PageSingleSelect';
+import { PageSelectVariant, PageSingleSelect } from '../../PageInputs/PageSingleSelect';
 import { useBreakpoint } from '../../components/useBreakPoint';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import {
@@ -110,6 +110,7 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
       ) : (
         <ToolbarItem>
           <PageSingleSelect
+            variant={PageSelectVariant.Typeahead}
             id="filter"
             value={selectedFilterKey}
             onChange={setSeletedFilterKey}

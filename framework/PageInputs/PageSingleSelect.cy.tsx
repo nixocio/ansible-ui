@@ -1,10 +1,11 @@
 /* eslint-disable i18next/no-literal-string */
 import { useState } from 'react';
-import { PageSelectOption, PageSingleSelect } from './PageSingleSelect';
+import { PageSelectOption, PageSingleSelect, PageSelectVariant } from './PageSingleSelect';
 
 interface ITestObject {
   name: string;
   description?: string;
+  label?: string;
 }
 
 const testObjects: ITestObject[] = [
@@ -24,12 +25,14 @@ function PageSingleSelectTest<T>(props: {
   placeholder?: string;
   defaultValue?: T;
   options: PageSelectOption<T>[];
+  variant?: PageSelectVariant;
 }) {
-  const { placeholder, defaultValue, options } = props;
+  const { placeholder, defaultValue, options, variant = PageSelectVariant.Single } = props;
   const [value, setValue] = useState(() => defaultValue);
   return (
     <PageSingleSelect
       id="test-single-select"
+      variant={variant}
       value={value}
       placeholder={placeholder}
       options={options}
@@ -68,5 +71,29 @@ describe('PageSingleSelect', () => {
     cy.singleSelectShouldHaveSelectedOption('#test-single-select', options[0].label);
     cy.selectSingleSelectOption('#test-single-select', options[1].label);
     cy.singleSelectShouldHaveSelectedOption('#test-single-select', options[1].label);
+  });
+});
+
+const NonExistentOption = 'Non existent option';
+const NotFoundResult = 'No results found';
+
+describe('PageSingleSelect Typeahead', () => {
+  beforeEach(() => {
+    cy.mount(
+      <PageSingleSelectTest
+        placeholder={placeholderText}
+        options={options}
+        variant={PageSelectVariant.Typeahead}
+      />
+    );
+  });
+
+  it('should filter options when typing', () => {
+    cy.get('#test-single-select').click();
+    cy.get('input').type(NonExistentOption);
+    cy.get('.pf-c-menu__content').should('contain.text', NotFoundResult);
+    cy.get('input').clear().type('1');
+    cy.get('.pf-c-menu__content').should('contain.text', options[0].label).click();
+    cy.selectSingleSelectOption('#test-single-select', options[0].label);
   });
 });

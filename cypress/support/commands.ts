@@ -80,7 +80,7 @@ declare global {
       singleSelectShouldHaveSelectedOption(
         selector: string,
         label: string | RegExp
-      ): Chainable<void>;
+      ): Chainable<JQuery<HTMLElement>>;
       singleSelectShouldContainOption(selector: string, label: string | RegExp): Chainable<void>;
       selectSingleSelectOption(selector: string, label: string | RegExp): Chainable<void>;
 
