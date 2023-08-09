@@ -3,7 +3,7 @@ import { compareStrings, useBulkConfirmation } from '../../../../framework';
 // import { requestDelete } from '../../../common/crud/Data';
 import { HubNamespace } from '../HubNamespace';
 import { useHubNamespacesColumns } from './useHubNamespacesColumns';
-import { hubAPI, nameKeyFn, requestDeletePulpItem } from '../../api/utils';
+import { hubAPI, nameKeyFn, requestDeleteHubItem } from '../../api/utils';
 
 export function useDeleteHubNamespaces(onComplete: (namespaces: HubNamespace[]) => void) {
   const { t } = useTranslation();
@@ -25,7 +25,7 @@ export function useDeleteHubNamespaces(onComplete: (namespaces: HubNamespace[]) 
       onComplete,
       alertPrompts: [t('Deleting a namespace will delete all collections in the namespace.')],
       actionFn: (namespace: HubNamespace) =>
-        requestDeletePulpItem(hubAPI`/_ui/v1/namespaces/${namespace.name}/`),
+        requestDeleteHubItem(hubAPI`/_ui/v1/namespaces/${namespace.name}/`),
     });
   };
   return deleteHubNamespaces;

@@ -1,8 +1,9 @@
 import { HTTPError } from 'ky';
-import { AutomationServerType } from '../../automation-servers/AutomationServer';
 import { activeAutomationServer } from '../../automation-servers/AutomationServersProvider';
 import { Task } from '../tasks/Task';
 import { deleteRequest, patchRequest, getRequest } from './request';
+import { TaskResponse } from '../tasks/Task';
+import { AutomationServerType } from '../../automation-servers/AutomationServer';
 
 function apiTag(strings: TemplateStringsArray, ...values: string[]) {
   if (strings[0]?.[0] !== '/') {
@@ -104,19 +105,14 @@ export function collectionKeyFn(item: {
 export function appendTrailingSlash(url: string) {
   return url.endsWith('/') ? url : url + '/';
 }
-interface ResponseBody {
-  status: number;
-  task: string;
-}
 
-export async function requestDeleteHubItem<T extends ResponseBody>(
-  url: string,
-  signal?: AbortSignal
-) {
+
+export async function requestDeleteHubItem<T extends object>(url: string, signal?: AbortSignal) {
   try {
     const { response, statusCode } = await deleteRequest<T>(url, signal);
     if (statusCode === 202) {
-      const taskHref = parsePulpIDFromURL(response.task);
+      const taskResponse = response as TaskResponse;
+      const taskHref = parsePulpIDFromURL(taskResponse.task);
       if (taskHref) {
         await waitForTask(taskHref, signal);
       }
@@ -126,15 +122,16 @@ export async function requestDeleteHubItem<T extends ResponseBody>(
   }
 }
 
-export async function requestPatchHubItem<T extends ResponseBody>(
+export async function requestPatchHubItem<T extends object, RequestBody = unknown>(
   url: string,
-  data: T,
+  data: RequestBody,
   signal?: AbortSignal
 ) {
   try {
     const { response, statusCode } = await patchRequest<T>(url, data, signal);
     if (statusCode === 202) {
-      const taskHref = parsePulpIDFromURL(response.task);
+      const taskResponse = response as TaskResponse;
+      const taskHref = parsePulpIDFromURL(taskResponse.task);
       if (taskHref) {
         await waitForTask(taskHref, signal);
       }
@@ -161,7 +158,8 @@ export async function waitForTask(
   try {
     while (retries > 0) {
       await new Promise((resolve) => setTimeout(resolve, currentDelay));
-      const { response: task } = await getRequest<Task>(pulpAPI`/tasks/${taskHref}`, signal);
+      const { response } = await getRequest<Task>(pulpAPI`/tasks/${taskHref}`, signal);
+      const task = response as Task;
 
       if (task && successStatus.includes(task.state)) {
         break;

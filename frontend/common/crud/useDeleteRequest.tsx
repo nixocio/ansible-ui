@@ -17,19 +17,13 @@ export function useDeleteRequest() {
 
   return async (url: string) => {
     await Delay();
-    let response: Response;
-    try {
-      response = await fetch(url, {
-        method: 'DELETE',
-        credentials: 'include',
-        headers: { 'X-CSRFToken': getCookie('csrftoken') ?? '' },
-        signal: abortSignalRef.current.signal,
-      });
-    } catch (error) {
-      if (error.name === 'AbortError') {
-        return;
-      }
-    }
+
+    const response = await fetch(url, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: { 'X-CSRFToken': getCookie('csrftoken') ?? '' },
+      signal: abortSignalRef.current.signal,
+    });
 
     if (!response.ok) {
       if (response.status === 401) {

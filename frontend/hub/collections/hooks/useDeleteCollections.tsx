@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
 // import { requestDelete } from '../../../common/crud/Data';
-import { idKeyFn, hubAPI, requestDeletePulpItem } from '../../api/utils';
+import { idKeyFn, hubAPI, requestDeleteHubItem } from '../../api/utils';
 import { Collection } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
 
@@ -26,7 +26,7 @@ export function useDeleteCollections(onComplete?: (collections: Collection[]) =>
         actionColumns,
         onComplete,
         actionFn: (collection: Collection) =>
-          requestDeletePulpItem(
+          requestDeleteHubItem(
             hubAPI`/v3/plugin/ansible/content/published/collections/index/${collection.namespace.name}/${collection.name}/`
           ),
       });

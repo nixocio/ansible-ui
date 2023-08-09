@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { usePostRequest } from '../../common/crud/usePostRequest';
 import { IRemotes } from './Remotes';
 import {
@@ -11,17 +11,34 @@ import {
   PageLayout,
 } from '../../../framework';
 import { PageFormGroup } from '../../../framework/PageForm/Inputs/PageFormGroup';
-import { appendTrailingSlash, pulpAPI } from '../api/utils';
+import {
+  appendTrailingSlash,
+  pulpAPI,
+  parsePulpIDFromURL,
+  requestPatchHubItem,
+} from '../api/utils';
 import { RouteObj } from '../../Routes';
 import { PageFormExpandableSection } from '../../../framework/PageForm/PageFormExpandableSection';
 import { PageFormFileUpload } from '../../../framework/PageForm/Inputs/PageFormFileUpload';
+import { useGet } from '../../common/crud/useGet';
+import { AwxError } from '../../awx/common/AwxError';
+import { LoadingPage } from '../../../framework/components/LoadingPage';
+
+interface RemoteFormProps extends IRemotes {
+  token?: string;
+  username?: string;
+  password?: string;
+  sso_url?: string;
+  proxy_username?: string;
+  proxy_password?: string;
+}
 
 export function CreateRemote() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const postRequest = usePostRequest<IRemotes>();
   const onSubmit: PageFormSubmitHandler<IRemotes> = async (remote) => {
-    const url = appendTrailingSlash(remote.url);
+    const url: string = appendTrailingSlash(remote.url);
     await postRequest(pulpAPI`/remotes/ansible/collection/`, {
       ...remote,
       url,
@@ -54,13 +71,76 @@ export function CreateRemote() {
   );
 }
 
-interface RemoteFormProps extends IRemotes {
-  token?: string;
-  username?: string;
-  password?: string;
-  sso_url?: string;
-  proxy_username?: string;
-  proxy_password?: string;
+interface RemoteApiResponse {
+  results: RemoteFormProps[];
+}
+
+export function EditRemote() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const params = useParams<{ id?: string }>();
+  const name = params.id;
+  const { data, error, refresh } = useGet<RemoteApiResponse>(
+    pulpAPI`/remotes/ansible/collection/?name=${name ?? ''}`
+  );
+
+  console.log(error, 'error');
+  if (error) return <AwxError error={error} handleRefresh={refresh} />;
+  if (!data) return <LoadingPage breadcrumbs tabs />;
+
+  const remote = data.results[0];
+
+  const handleRefresh = () => {
+    if (!error && !remote) {
+      navigate(-1);
+    }
+  };
+
+  const onSubmit: PageFormSubmitHandler<IRemotes> = async (remote) => {
+    if (remote.headers === undefined || remote.headers === null) {
+      delete remote.headers;
+    }
+    await requestPatchHubItem<RemoteFormProps>(
+      pulpAPI`/remotes/ansible/collection/${parsePulpIDFromURL(remote.pulp_href) ?? ''}`,
+      remote
+    );
+    navigate(-1);
+  };
+  
+  if (data?.count === 0) {
+    return (
+      <PageLayout>
+        <PageHeader
+          breadcrumbs={[{ label: t('Remotes'), to: RouteObj.Remotes }, { label: t('Edit Remote') }]}
+        />
+        <AwxError error={new Error(t('Remote not found'))} handleRefresh={handleRefresh} />
+      </PageLayout>
+    );
+  }
+
+  return (
+    <PageLayout>
+      <PageHeader
+        title={t('Edit Remote')}
+        breadcrumbs={[{ label: t('Remotes'), to: RouteObj.Remotes }, { label: t(' Remote') }]}
+      />
+      <PageForm<RemoteFormProps>
+        submitText={t('Edit Remote')}
+        onSubmit={onSubmit}
+        onCancel={() => navigate(-1)}
+        defaultValue={remote}
+      >
+        <>
+          <RemoteInputs />
+          <PageFormExpandableSection singleColumn>
+            <ProxyAdvancedRemoteInputs />
+            <CertificatesAdvancedRemoteInputs />
+            <MiscAdvancedRemoteInputs />
+          </PageFormExpandableSection>
+        </>
+      </PageForm>
+    </PageLayout>
+  );
 }
 
 function ProxyAdvancedRemoteInputs() {

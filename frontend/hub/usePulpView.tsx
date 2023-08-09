@@ -18,11 +18,12 @@ export interface PulpItemsResponse<T extends object> {
   next?: string;
 }
 
-export type IHubView<T extends object> = IView &
+export type IPulpView<T extends object> = IView &
   ISelected<T> & {
     itemCount: number | undefined;
     pageItems: T[] | undefined;
     refresh: () => Promise<PulpItemsResponse<T> | undefined>;
+    unselectItemsAndRefresh: (items: T[]) => void;
   };
 
 export function usePulpView<T extends object>({
@@ -39,7 +40,7 @@ export function usePulpView<T extends object>({
   tableColumns?: ITableColumn<T>[];
   disableQueryString?: boolean;
   queryParams?: QueryParams;
-}): IHubView<T> {
+}): IPulpView<T> {
   const view = useView({
     defaultValues: { sort: tableColumns && tableColumns.length ? tableColumns[0].sort : undefined },
     disableQueryString,
@@ -111,6 +112,14 @@ export function usePulpView<T extends object>({
     itemCountRef.current.itemCount = data?.count;
   }
 
+  const unselectItemsAndRefresh = useCallback(
+    (items: T[]) => {
+      selection.unselectItems(items);
+      void refresh();
+    },
+    [refresh, selection]
+  );
+
   return useMemo(() => {
     return {
       refresh,
@@ -119,8 +128,9 @@ export function usePulpView<T extends object>({
       error,
       ...view,
       ...selection,
+      unselectItemsAndRefresh,
     };
-  }, [data, error, refresh, selection, view]);
+  }, [data, error, refresh, selection, view, unselectItemsAndRefresh]);
 }
 
 export async function getAwxError(err: unknown) {

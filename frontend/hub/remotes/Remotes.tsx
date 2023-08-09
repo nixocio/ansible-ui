@@ -5,6 +5,9 @@ import { pulpAPI, pulpHrefKeyFn } from '../api/utils';
 import { useRemoteActions } from './hooks/useRemoteActions';
 import { useRemoteColumns } from './hooks/useRemoteColumns';
 import { useRemoteFilters } from './hooks/useRemoteFilters';
+import { useRemoteToolbarActions } from './hooks/useRemoteToolbarActions';
+import { useNavigate } from 'react-router-dom';
+import { RouteObj } from '../../Routes';
 
 export interface IRemotes {
   pulp_href: string;
@@ -16,7 +19,7 @@ export interface IRemotes {
   client_key: string;
   tls_validation: boolean;
   proxy_url: string;
-  pulp_labels: unknown;
+  pulp_labels: string[];
   pulp_last_updated: string;
   download_concurrency: number;
   max_retries: number;
@@ -25,7 +28,7 @@ export interface IRemotes {
   connect_timeout: number;
   sock_connect_timeout: number;
   sock_read_timeout: number;
-  headers: string;
+  headers?: string;
   rate_limit: number;
   hidden_fields: {
     name: string;
@@ -36,29 +39,33 @@ export interface IRemotes {
   signed_only: boolean;
   last_sync_task: string;
 }
-
 export function Remotes() {
   const { t } = useTranslation();
   const toolbarFilters = useRemoteFilters();
   const tableColumns = useRemoteColumns();
-  const toolbarActions = useRemoteActions();
   const view = usePulpView<IRemotes>({
     url: pulpAPI`/remotes/`,
     keyFn: pulpHrefKeyFn,
     toolbarFilters,
     tableColumns,
   });
+  const toolbarActions = useRemoteToolbarActions(view);
+  const rowActions = useRemoteActions(view);
 
+  const navigate = useNavigate();
   return (
     <PageLayout>
       <PageHeader title={t('Remotes')} description={t('Remotes')} />
       <PageTable<IRemotes>
-        toolbarFilters={toolbarFilters}
+        defaultSubtitle={t('Remote')}
+        emptyStateButtonClick={() => navigate(RouteObj.CreateRemotes)}
+        emptyStateButtonText={t('Create remote')}
+        emptyStateTitle={t('No remotes yet')}
+        errorStateTitle={t('Error loading remotes')}
+        rowActions={rowActions}
         tableColumns={tableColumns}
         toolbarActions={toolbarActions}
-        errorStateTitle={t('Error loading remotes')}
-        emptyStateTitle={t('No remotes yet')}
-        defaultSubtitle={t('Remote')}
+        toolbarFilters={toolbarFilters}
         {...view}
       />
     </PageLayout>

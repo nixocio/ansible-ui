@@ -1,6 +1,7 @@
 import { AnsibleError } from '../../common/crud/ansible-error';
 import { getCookie } from '../../common/crud/cookie';
 import { Delay } from '../../common/crud/delay';
+import { TaskResponse } from '../tasks/Task';
 
 interface Options {
   method: string;
@@ -14,17 +15,20 @@ interface Response<T> {
   response: T;
 }
 
-export async function request<T>(url: string, options: Options): Promise<Response<T>> {
+export async function request<T extends object | TaskResponse>(
+  url: string,
+  options: Options
+): Promise<Response<T | TaskResponse>> {
   await Delay();
 
-  const defaulHeaders = {
+  const defaultHeaders = {
     'X-CSRFToken': getCookie('csrftoken') || '',
   };
   const receivedResponse = await fetch(url, {
     credentials: 'include',
     ...options,
     headers: {
-      ...defaulHeaders,
+      ...defaultHeaders,
       ...options.headers,
     },
   });
@@ -37,13 +41,30 @@ export async function request<T>(url: string, options: Options): Promise<Respons
     );
   }
 
+  const statusCode = receivedResponse.status;
+  if (statusCode === 202) {
+    const taskResponse = (await receivedResponse.json()) as TaskResponse;
+    return {
+      statusCode,
+      response: taskResponse,
+    };
+  }
+
+  const genericResponse = (await receivedResponse.json()) as T;
   return {
-    response: (await receivedResponse.json()) as T,
-    statusCode: receivedResponse.status,
+    statusCode,
+    response: genericResponse,
   };
 }
 
-export async function postRequest<T>(url: string, data: T, signal?: AbortSignal) {
+export async function postRequest<
+  ResponseBody extends object | TaskResponse,
+  RequestBody = unknown
+>(
+  url: string,
+  data: RequestBody,
+  signal?: AbortSignal
+): Promise<Response<ResponseBody | TaskResponse>> {
   const options: Options = {
     method: 'POST',
     headers: {
@@ -52,10 +73,17 @@ export async function postRequest<T>(url: string, data: T, signal?: AbortSignal)
     body: JSON.stringify(data),
     signal,
   };
-  return request<T>(url, options);
+  return request<ResponseBody>(url, options);
 }
 
-export async function patchRequest<T>(url: string, data: T, signal?: AbortSignal) {
+export async function patchRequest<
+  ResponseBody extends object | TaskResponse,
+  RequestBody = unknown
+>(
+  url: string,
+  data: RequestBody,
+  signal?: AbortSignal
+): Promise<Response<ResponseBody | TaskResponse>> {
   const options: Options = {
     method: 'PATCH',
     headers: {
@@ -64,21 +92,27 @@ export async function patchRequest<T>(url: string, data: T, signal?: AbortSignal
     body: JSON.stringify(data),
     signal,
   };
-  return request<T>(url, options);
+  return request<ResponseBody>(url, options);
 }
 
-export async function deleteRequest<T>(url: string, signal?: AbortSignal) {
+export async function deleteRequest<ResponseBody extends object | TaskResponse>(
+  url: string,
+  signal?: AbortSignal
+): Promise<Response<ResponseBody | TaskResponse>> {
   const options: Options = {
     method: 'DELETE',
     signal,
   };
-  return request<T>(url, options);
+  return request<ResponseBody>(url, options);
 }
 
-export async function getRequest<T>(url: string, signal?: AbortSignal) {
+export async function getRequest<ResponseBody extends object | TaskResponse>(
+  url: string,
+  signal?: AbortSignal
+): Promise<Response<ResponseBody | TaskResponse>> {
   const options: Options = {
     method: 'GET',
     signal,
   };
-  return request<T>(url, options);
+  return request<ResponseBody>(url, options);
 }

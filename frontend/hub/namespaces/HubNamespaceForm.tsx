@@ -13,6 +13,8 @@ import { usePatchRequest } from '../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../common/crud/usePostRequest';
 import { HubNamespace } from './HubNamespace';
 import { hubAPI } from '../api/utils';
+import { AwxError } from '../../awx/common/AwxError';
+import { error } from 'console';
 
 export function CreateHubNamespace() {
   const { t } = useTranslation();
@@ -48,7 +50,7 @@ export function EditHubNamespace() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const name = params.id;
-  const { data: namespace } = useGet<HubNamespace>(hubAPI`/_ui/v1/namespaces/${name ?? ''}/`);
+  const { data: namespace, refresh } = useGet<HubNamespace>(hubAPI`/_ui/v1/namespaces/${name ?? ''}/`);
   const patchRequest = usePatchRequest<HubNamespace, HubNamespace>();
   const onSubmit: PageFormSubmitHandler<HubNamespace> = async (namespace) => {
     await patchRequest(hubAPI`/_ui/v1/namespaces/`, namespace);
@@ -63,6 +65,7 @@ export function EditHubNamespace() {
             { label: t('Edit Namespace') },
           ]}
         />
+        <AwxError error={new Error('Test')} handleRefresh={refresh} />
       </PageLayout>
     );
   }
