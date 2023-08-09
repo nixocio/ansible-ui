@@ -1,5 +1,10 @@
+import { request } from 'http';
 import { AutomationServerType } from '../automation-servers/AutomationServer';
 import { activeAutomationServer } from '../automation-servers/AutomationServersProvider';
+import { stringIsUUID } from '../awx/common/util/strings';
+import { requestDelete, requestGet } from '../common/crud/Data';
+import { useGet } from '../common/crud/useGet';
+import { Task } from './tasks/Task';
 
 function apiTag(strings: TemplateStringsArray, ...values: string[]) {
   if (strings[0]?.[0] !== '/') {
@@ -101,3 +106,72 @@ export function collectionKeyFn(item: {
 export function appendTrailingSlash(url: string) {
   return url.endsWith('/') ? url : url + '/';
 }
+
+export async function waitForHubTask(taskHref: string | null, signal?: AbortSignal, retries = 10) {
+  const failingStatus = ['skipped', 'failed', 'canceled'];
+  const successStatus = ['completed'];
+
+  if (taskHref === null || !stringIsUUID(taskHref)) {
+    throw new Error('Invalid task href');
+  }
+
+  let task: Task | null = null;
+  try {
+    task = await requestGet<Task>(pulpAPI`/tasks/${taskHref}`, signal);
+    while (
+      !successStatus.includes(task.state) &&
+      !failingStatus.includes(task.state) &&
+      retries > 0
+    ) {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      task = await requestGet<Task>(pulpAPI`/tasks/${taskHref}`, signal);
+      retries--;
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(t(`Error waiting for task: ${error.message}`));
+    }
+    throw new Error(t(`Error waiting for task`));
+  }
+
+  if (task && task.state === 'failed') {
+    throw new Error(`Task failed ${task?.error?.description ?? ''}}`);
+  }
+  return task;
+}
+
+interface Options {
+  bailAfter?: number;
+  multiplier?: number;
+  waitMs?: number;
+}
+
+// export function waitForTask(task: Task, options: Options = {}) {
+//   // default to starting with a 2s wait, increasing the wait time 1.5x each time, with max 10 attempts
+//   // 2000, 1.5, 10 = ~226s ; 500, 1.5, 10 = ~57s
+//   const { waitMs = 2000, multiplier = 1.5, bailAfter = 10 } = options;
+
+//   return useGet<Task>(pulpAPI`/tasks/${task.pulp_href}`).then((result) => {
+//     const failing = ['skipped', 'failed', 'canceled'];
+
+//     if (failing.includes(result.data.state)) {
+//       return Promise.reject(
+//         result.data.error?.description ?? t`Task failed without error message.`
+//       );
+//     }
+
+//     if (result.data.state !== 'completed') {
+//       if (!bailAfter) {
+//         return Promise.reject(new Error(t`Giving up waiting for task after 10 attempts.`));
+//       }
+
+//       return new Promise((r) => setTimeout(r, waitMs)).then(() =>
+//         waitForTask(task, {
+//           ...options,
+//           waitMs: Math.round(waitMs * multiplier),
+//           bailAfter: bailAfter - 1,
+//         })
+//       );
+//     }
+//   });
+// }

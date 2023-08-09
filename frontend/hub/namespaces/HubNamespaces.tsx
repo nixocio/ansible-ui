@@ -60,18 +60,18 @@ export function CommonNamespaces({ url }: { url: string }) {
   const view = useHubView<HubNamespace>({ url, keyFn: idKeyFn, toolbarFilters, tableColumns });
   return (
     <PageTable<HubNamespace>
-      toolbarFilters={toolbarFilters}
-      tableColumns={tableColumns}
-      toolbarActions={toolbarActions}
-      rowActions={rowActions}
-      errorStateTitle={t('Error loading namespaces')}
-      emptyStateTitle={t('No namespaces yet')}
-      emptyStateDescription={t('To get started, create an namespace.')}
-      emptyStateButtonText={t('Add namespace')}
-      emptyStateButtonClick={() => navigate(RouteObj.CreateNamespace)}
-      {...view}
       defaultSubtitle={t('Namespace')}
       defaultTableView="cards"
+      emptyStateButtonClick={() => navigate(RouteObj.CreateNamespace)}
+      emptyStateButtonText={t('Add namespace')}
+      emptyStateDescription={t('To get started, create an namespace.')}
+      emptyStateTitle={t('No namespaces yet')}
+      errorStateTitle={t('Error loading namespaces')}
+      rowActions={rowActions}
+      tableColumns={tableColumns}
+      toolbarActions={toolbarActions}
+      toolbarFilters={toolbarFilters}
+      {...view}
     />
   );
 }
