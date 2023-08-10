@@ -53,7 +53,7 @@ export async function requestDelete<ResponseBody>(
   return requestCommon<ResponseBody>(url, { signal }, ky.delete);
 }
 
-async function requestCommon<ResponseBody>(
+export async function requestCommon<ResponseBody>(
   url: string,
   options: Options,
   methodFn: (input: Input, options: Options) => ResponsePromise

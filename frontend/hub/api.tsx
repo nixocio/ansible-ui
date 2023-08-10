@@ -1,5 +1,7 @@
+import { extend } from 'cypress/types/lodash';
 import { AutomationServerType } from '../automation-servers/AutomationServer';
 import { activeAutomationServer } from '../automation-servers/AutomationServersProvider';
+import { requestCommon, requestDelete } from '../common/crud/Data';
 
 function apiTag(strings: TemplateStringsArray, ...values: string[]) {
   if (strings[0]?.[0] !== '/') {
@@ -100,4 +102,36 @@ export function collectionKeyFn(item: {
 
 export function appendTrailingSlash(url: string) {
   return url.endsWith('/') ? url : url + '/';
+}
+interface ResponseBody {
+  status: number;
+  task: string;
+}
+
+export async function requestDeleteHUBItem<T extends ResponseBody>(
+  url: string,
+  signal?: AbortSignal
+) {
+  try {
+    const response = await requestDelete<T>(url, signal);
+    if (response.status === 202) {
+      // call for wait for task
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function requestDeletePulpItem<T extends ResponseBody>(
+  url: string,
+  signal?: AbortSignal
+) {
+  try {
+    const response = await requestDelete<T>(url, signal);
+    if (response.status === 202) {
+      // call for wait for task
+    }
+  } catch (error) {
+    console.log(error);
+  }
 }
