@@ -1,11 +1,10 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
-import { requestDelete } from '../../../common/crud/Data';
-import { idKeyFn } from '../../api';
+// import { requestDelete } from '../../../common/crud/Data';
+import { idKeyFn, hubAPI, requestDeletePulpItem } from '../../api/utils';
 import { Collection } from '../Collection';
 import { useCollectionColumns } from './useCollectionColumns';
-import { hubAPI } from '../../api';
 
 export function useDeleteCollections(onComplete?: (collections: Collection[]) => void) {
   const { t } = useTranslation();
@@ -27,7 +26,7 @@ export function useDeleteCollections(onComplete?: (collections: Collection[]) =>
         actionColumns,
         onComplete,
         actionFn: (collection: Collection) =>
-          requestDelete(
+          requestDeletePulpItem(
             hubAPI`/v3/plugin/ansible/content/published/collections/index/${collection.namespace.name}/${collection.name}/`
           ),
       });

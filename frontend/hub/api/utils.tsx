@@ -1,7 +1,8 @@
-import { extend } from 'cypress/types/lodash';
-import { AutomationServerType } from '../automation-servers/AutomationServer';
-import { activeAutomationServer } from '../automation-servers/AutomationServersProvider';
-import { requestCommon, requestDelete } from '../common/crud/Data';
+import { HTTPError } from 'ky';
+import { AutomationServerType } from '../../automation-servers/AutomationServer';
+import { activeAutomationServer } from '../../automation-servers/AutomationServersProvider';
+import { Task } from '../tasks/Task';
+import { deleteRequest, patchRequest, getRequest } from './request';
 
 function apiTag(strings: TemplateStringsArray, ...values: string[]) {
   if (strings[0]?.[0] !== '/') {
@@ -108,30 +109,84 @@ interface ResponseBody {
   task: string;
 }
 
-export async function requestDeleteHUBItem<T extends ResponseBody>(
+export async function requestDeleteHubItem<T extends ResponseBody>(
   url: string,
   signal?: AbortSignal
 ) {
   try {
-    const response = await requestDelete<T>(url, signal);
-    if (response.status === 202) {
-      // call for wait for task
+    const { response, statusCode } = await deleteRequest<T>(url, signal);
+    if (statusCode === 202) {
+      const taskHref = parsePulpIDFromURL(response.task);
+      if (taskHref) {
+        await waitForTask(taskHref, signal);
+      }
     }
   } catch (error) {
-    console.log(error);
+    throw new Error('Error deleting item');
   }
 }
 
-export async function requestDeletePulpItem<T extends ResponseBody>(
+export async function requestPatchHubItem<T extends ResponseBody>(
   url: string,
+  data: T,
   signal?: AbortSignal
 ) {
   try {
-    const response = await requestDelete<T>(url, signal);
-    if (response.status === 202) {
-      // call for wait for task
+    const { response, statusCode } = await patchRequest<T>(url, data, signal);
+    if (statusCode === 202) {
+      const taskHref = parsePulpIDFromURL(response.task);
+      if (taskHref) {
+        await waitForTask(taskHref, signal);
+      }
     }
   } catch (error) {
-    console.log(error);
+    throw new Error('Error updating item');
+  }
+}
+
+export async function waitForTask(
+  taskHref: string | null,
+  signal?: AbortSignal,
+  minDelay = 5,
+  maxDelay = 1000,
+  retries = 20
+) {
+  if (taskHref === null) {
+    throw new Error('Invalid task href');
+  }
+  const failingStatus = ['skipped', 'failed', 'canceled'];
+  const successStatus = ['completed'];
+
+  let currentDelay = minDelay;
+  try {
+    while (retries > 0) {
+      await new Promise((resolve) => setTimeout(resolve, currentDelay));
+      const { response: task } = await getRequest<Task>(pulpAPI`/tasks/${taskHref}`, signal);
+
+      if (task && successStatus.includes(task.state)) {
+        break;
+      }
+
+      if (task && failingStatus.includes(task.state)) {
+        if (task?.error?.description) {
+          throw new Error(task?.error.description);
+        } else {
+          throw new Error('Task failed without error message.');
+        }
+      }
+      currentDelay = Math.min(currentDelay * 2, maxDelay);
+      retries--;
+    }
+  } catch (error) {
+    if (error instanceof HTTPError) {
+      if (error.response.status === 404) {
+        throw new Error(`Task not found`);
+      }
+    } else {
+      throw error;
+    }
+  }
+  if (retries === 0) {
+    throw new Error(`Task did not finish within the specified retries`);
   }
 }

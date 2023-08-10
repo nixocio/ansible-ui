@@ -5,4 +5,11 @@ export interface Task {
   started_at: string;
   finished_at: string;
   state: 'completed' | 'failed';
+  error?: TaskError;
+}
+
+interface TaskError {
+  code: string;
+  description: string;
+  traceback: string;
 }

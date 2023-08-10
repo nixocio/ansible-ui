@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../framework';
-import { requestDelete } from '../../../common/crud/Data';
+// import { requestDelete } from '../../../common/crud/Data';
 import { HubNamespace } from '../HubNamespace';
 import { useHubNamespacesColumns } from './useHubNamespacesColumns';
-import { hubAPI, nameKeyFn } from '../../api';
+import { hubAPI, nameKeyFn, requestDeletePulpItem } from '../../api/utils';
 
 export function useDeleteHubNamespaces(onComplete: (namespaces: HubNamespace[]) => void) {
   const { t } = useTranslation();
@@ -25,7 +25,7 @@ export function useDeleteHubNamespaces(onComplete: (namespaces: HubNamespace[]) 
       onComplete,
       alertPrompts: [t('Deleting a namespace will delete all collections in the namespace.')],
       actionFn: (namespace: HubNamespace) =>
-        requestDelete(hubAPI`/_ui/v1/namespaces/${namespace.name}/`),
+        requestDeletePulpItem(hubAPI`/_ui/v1/namespaces/${namespace.name}/`),
     });
   };
   return deleteHubNamespaces;
