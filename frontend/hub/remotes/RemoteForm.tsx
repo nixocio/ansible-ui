@@ -84,7 +84,6 @@ export function EditRemote() {
     pulpAPI`/remotes/ansible/collection/?name=${name ?? ''}`
   );
 
-  console.log(error, 'error');
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!data) return <LoadingPage breadcrumbs tabs />;
 
@@ -100,7 +99,7 @@ export function EditRemote() {
     if (remote.headers === undefined || remote.headers === null) {
       delete remote.headers;
     }
-    await requestPatchHubItem<RemoteFormProps>(
+    await requestPutI<RemoteFormProps>(
       pulpAPI`/remotes/ansible/collection/${parsePulpIDFromURL(remote.pulp_href) ?? ''}`,
       remote
     );

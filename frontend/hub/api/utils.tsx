@@ -122,6 +122,14 @@ export async function requestDeleteHubItem<T extends object>(url: string, signal
   }
 }
 
+export async function requestPutHubItem<T extends object, RequestBody = unknown>(
+  url: string,
+  data: RequestBody,
+  signal?: AbortSignal
+) {
+  try {
+    const { response, statusCode } = await putRequest<T>(url, data, signal);
+
 export async function requestPatchHubItem<T extends object, RequestBody = unknown>(
   url: string,
   data: RequestBody,
