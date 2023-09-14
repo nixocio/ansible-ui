@@ -30,7 +30,7 @@ import { RouteObj } from '../../common/Routes';
 import { StatusCell } from '../../common/Status';
 import { useGet } from '../../common/crud/useGet';
 import { EdaRoute } from '../EdaRoutes';
-import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
+import { EDA_API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { Status0E7Enum } from '../interfaces/generated/eda-api';
@@ -62,7 +62,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
   );
 
   const { data: rulebookActivation, refresh } = useGet<EdaRulebookActivation>(
-    `${API_PREFIX}/activations/${params.id ?? ''}/`,
+    `${EDA_API_PREFIX}/activations/${params.id ?? ''}/`,
     undefined,
     { refreshInterval: SWR_REFRESH_INTERVAL }
   );
@@ -245,7 +245,7 @@ export function RulebookActivationDetails({ initialTabIndex = 0 }) {
 
     const tableColumns = useActivationHistoryColumns();
     const view = useEdaView<EdaActivationInstance>({
-      url: `${API_PREFIX}/activations/${params?.id || ''}/instances/`,
+      url: `${EDA_API_PREFIX}/activations/${params?.id || ''}/instances/`,
       toolbarFilters,
       tableColumns,
     });

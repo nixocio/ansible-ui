@@ -27,7 +27,7 @@ import {
 import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { useGet } from '../../../common/crud/useGet';
 import { PageDetailsSection } from '../../common/PageDetailSection';
-import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
+import { EDA_API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaInventory } from '../../interfaces/EdaInventory';
 import { useDeleteInventories } from './hooks/useDeleteInventories';
 
@@ -35,7 +35,7 @@ export function InventoryDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data: inventory } = useGet<EdaInventory>(
-    `${API_PREFIX}/inventory/${params.id ?? ''}/`,
+    `${EDA_API_PREFIX}/inventory/${params.id ?? ''}/`,
     undefined,
     { refreshInterval: SWR_REFRESH_INTERVAL }
   );

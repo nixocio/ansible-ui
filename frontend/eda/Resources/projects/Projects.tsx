@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { RouteObj } from '../../../common/Routes';
-import { API_PREFIX } from '../../constants';
+import { EDA_API_PREFIX } from '../../constants';
 import { EdaProject } from '../../interfaces/EdaProject';
 import { useEdaView } from '../../useEventDrivenView';
 import { useProjectActions } from './hooks/useProjectActions';
@@ -16,7 +16,7 @@ export function Projects() {
   const toolbarFilters = useProjectFilters();
   const tableColumns = useProjectColumns();
   const view = useEdaView<EdaProject>({
-    url: `${API_PREFIX}/projects/`,
+    url: `${EDA_API_PREFIX}/projects/`,
     toolbarFilters,
     tableColumns,
   });

@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
 import { RouteObj } from '../../common/Routes';
-import { API_PREFIX } from '../constants';
+import { EDA_API_PREFIX } from '../constants';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
 import { useEdaView } from '../useEventDrivenView';
 import { useRulebookActivationActions } from './hooks/useRulebookActivationActions';
@@ -16,7 +16,7 @@ export function RulebookActivations() {
   const toolbarFilters = useRulebookActivationFilters();
   const tableColumns = useRulebookActivationColumns();
   const view = useEdaView<EdaRulebookActivation>({
-    url: `${API_PREFIX}/activations/`,
+    url: `${EDA_API_PREFIX}/activations/`,
     toolbarFilters,
     tableColumns,
   });

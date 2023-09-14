@@ -4,14 +4,14 @@ import { EdaGroup } from '../../../interfaces/EdaGroup';
 import { useEdaView } from '../../../useEventDrivenView';
 import { useGroupFilters } from './useGroupFilters';
 import { useGroupColumns } from './useGroupColumns';
-import { API_PREFIX } from '../../../constants';
+import { EDA_API_PREFIX } from '../../../constants';
 
 export function useSelectGroups() {
   const { t } = useTranslation();
   const toolbarFilters = useGroupFilters();
   const tableColumns = useGroupColumns();
   const view = useEdaView<EdaGroup>({
-    url: `${API_PREFIX}/groups/`,
+    url: `${EDA_API_PREFIX}/groups/`,
     toolbarFilters,
     tableColumns,
     disableQueryString: true,

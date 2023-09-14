@@ -25,7 +25,7 @@ import {
 } from '../../../../framework';
 import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
-import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
+import { EDA_API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
 import { EdaDecisionEnvironmentRead } from '../../interfaces/EdaDecisionEnvironment';
 import { useDeleteDecisionEnvironment } from './hooks/useDeleteDecisionEnvironments';
@@ -50,13 +50,13 @@ export function DecisionEnvironmentDetails() {
     </>
   );
   const { data: decisionEnvironment } = useGet<EdaDecisionEnvironmentRead>(
-    `${API_PREFIX}/decision-environments/${params.id ?? ''}/`,
+    `${EDA_API_PREFIX}/decision-environments/${params.id ?? ''}/`,
     undefined,
     { refreshInterval: SWR_REFRESH_INTERVAL }
   );
 
   const { data: credential } = useGet<EdaCredential>(
-    `${API_PREFIX}/credentials/${decisionEnvironment?.credential?.id ?? ''}/`
+    `${EDA_API_PREFIX}/credentials/${decisionEnvironment?.credential?.id ?? ''}/`
   );
 
   const deleteDecisionEnvironment = useDeleteDecisionEnvironment((deleted) => {

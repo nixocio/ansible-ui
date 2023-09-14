@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { requestDelete } from '../../../../common/crud/Data';
 import { idKeyFn } from '../../../../common/utils/nameKeyFn';
-import { API_PREFIX } from '../../../constants';
+import { EDA_API_PREFIX } from '../../../constants';
 import { EdaGroup } from '../../../interfaces/EdaGroup';
 import { useGroupColumns } from './useGroupColumns';
 
@@ -26,7 +26,7 @@ export function useDeleteGroups(onComplete: (Groups: EdaGroup[]) => void) {
         confirmationColumns,
         actionColumns,
         onComplete,
-        actionFn: (Group: EdaGroup) => requestDelete(`${API_PREFIX}/Groups/${Group.id}/`),
+        actionFn: (Group: EdaGroup) => requestDelete(`${EDA_API_PREFIX}/Groups/${Group.id}/`),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]

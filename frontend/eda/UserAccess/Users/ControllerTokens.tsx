@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageLayout, PageTable } from '../../../../framework';
 import { RouteObj } from '../../../common/Routes';
-import { API_PREFIX } from '../../constants';
+import { EDA_API_PREFIX } from '../../constants';
 import { EdaControllerToken } from '../../interfaces/EdaControllerToken';
 import { useEdaView } from '../../useEventDrivenView';
 import { useControllerTokenActions } from './hooks/useControllerTokenActions';
@@ -15,7 +15,7 @@ export function ControllerTokens() {
   const tableColumns = useControllerTokensColumns();
 
   const view = useEdaView<EdaControllerToken>({
-    url: `${API_PREFIX}/users/me/awx-tokens/`,
+    url: `${EDA_API_PREFIX}/users/me/awx-tokens/`,
     tableColumns,
   });
   const rowActions = useControllerTokenActions(view);

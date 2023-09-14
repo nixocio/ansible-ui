@@ -19,7 +19,7 @@ import { StatusCell } from '../../common/Status';
 import { useGet } from '../../common/crud/useGet';
 import { EdaRoute } from '../EdaRoutes';
 import { PageDetailsSection } from '../common/PageDetailsSection';
-import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
+import { EDA_API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
 import { EdaActivationInstance } from '../interfaces/EdaActivationInstance';
 import { EdaActivationInstanceLog } from '../interfaces/EdaActivationInstanceLog';
 import { EdaRulebookActivation } from '../interfaces/EdaRulebookActivation';
@@ -28,19 +28,19 @@ export function ActivationInstanceDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data: activationInstance } = useGet<EdaActivationInstance>(
-    `${API_PREFIX}/activation-instances/${params.id ?? ''}/`,
+    `${EDA_API_PREFIX}/activation-instances/${params.id ?? ''}/`,
     undefined,
     { refreshInterval: SWR_REFRESH_INTERVAL }
   );
 
   const { data: activationInstanceLogInfo } = useGet<AwxItemsResponse<EdaActivationInstanceLog>>(
-    `${API_PREFIX}/activation-instances/${params.id ?? ''}/logs/?page_size=1`,
+    `${EDA_API_PREFIX}/activation-instances/${params.id ?? ''}/logs/?page_size=1`,
     undefined,
     { refreshInterval: SWR_REFRESH_INTERVAL }
   );
 
   const { data: activationInstanceLog } = useGet<AwxItemsResponse<EdaActivationInstanceLog>>(
-    `${API_PREFIX}/activation-instances/${params.id ?? ''}/logs/?page_size=${
+    `${EDA_API_PREFIX}/activation-instances/${params.id ?? ''}/logs/?page_size=${
       activationInstanceLogInfo?.count || 10
     }`,
     undefined,
@@ -48,7 +48,7 @@ export function ActivationInstanceDetails() {
   );
 
   const { data: activation } = useGet<EdaRulebookActivation>(
-    `${API_PREFIX}/activations/${activationInstance?.activation_id ?? ''}/`,
+    `${EDA_API_PREFIX}/activations/${activationInstance?.activation_id ?? ''}/`,
     undefined,
     { refreshInterval: SWR_REFRESH_INTERVAL }
   );

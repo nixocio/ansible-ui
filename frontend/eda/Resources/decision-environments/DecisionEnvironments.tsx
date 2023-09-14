@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { PageTableViewTypeE } from '../../../../framework/PageToolbar/PageTableViewType';
 import { RouteObj } from '../../../common/Routes';
-import { API_PREFIX } from '../../constants';
+import { EDA_API_PREFIX } from '../../constants';
 import { EdaDecisionEnvironment } from '../../interfaces/EdaDecisionEnvironment';
 import { useEdaView } from '../../useEventDrivenView';
 import { useDecisionEnvironmentActions } from './hooks/useDecisionEnvironmentActions';
@@ -17,7 +17,7 @@ export function DecisionEnvironments() {
   const toolbarFilters = useDecisionEnvironmentFilters();
   const tableColumns = useDecisionEnvironmentsColumns();
   const view = useEdaView<EdaDecisionEnvironment>({
-    url: `${API_PREFIX}/decision-environments/`,
+    url: `${EDA_API_PREFIX}/decision-environments/`,
     toolbarFilters,
     tableColumns,
   });

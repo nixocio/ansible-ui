@@ -12,7 +12,7 @@ import { RouteObj } from '../../../common/Routes';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useEdaActiveUser } from '../../../common/useActiveUser';
 import { EdaRoute } from '../../EdaRoutes';
-import { API_PREFIX } from '../../constants';
+import { EDA_API_PREFIX } from '../../constants';
 import { EdaControllerToken, EdaControllerTokenCreate } from '../../interfaces/EdaControllerToken';
 
 function ControllerTokenInputs() {
@@ -51,7 +51,7 @@ export function CreateControllerToken() {
   const user = useEdaActiveUser();
 
   const onSubmit: PageFormSubmitHandler<EdaControllerTokenCreate> = async (token) => {
-    await postRequest(`${API_PREFIX}/users/me/awx-tokens/`, token);
+    await postRequest(`${EDA_API_PREFIX}/users/me/awx-tokens/`, token);
     navigate(RouteObj.EdaMyTokens);
   };
   const onCancel = () => navigate(-1);

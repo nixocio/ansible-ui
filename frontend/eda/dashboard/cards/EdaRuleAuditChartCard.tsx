@@ -6,14 +6,14 @@ import { PageDashboardCard } from '../../../../framework/PageDashboard/PageDashb
 import { PageDashboardChart } from '../../../../framework/PageDashboard/PageDashboardChart';
 import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
-import { API_PREFIX } from '../../constants';
+import { EDA_API_PREFIX } from '../../constants';
 import { EdaResult } from '../../interfaces/EdaResult';
 import { EdaRuleAuditItem } from '../../interfaces/EdaRuleAudit';
 
 const RuleAuditChart = () => {
   const { t } = useTranslation();
 
-  const { data } = useGet<EdaResult<EdaRuleAuditItem>>(`${API_PREFIX}/audit-rules/`);
+  const { data } = useGet<EdaResult<EdaRuleAuditItem>>(`${EDA_API_PREFIX}/audit-rules/`);
 
   // Chart Test Code
   // const generateRandomEdaRuleAudits = useCallback(

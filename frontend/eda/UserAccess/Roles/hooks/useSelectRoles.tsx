@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useEdaView } from '../../../useEventDrivenView';
 import { useRoleColumns } from './useRoleColumns';
-import { API_PREFIX } from '../../../constants';
+import { EDA_API_PREFIX } from '../../../constants';
 import { EdaRole } from '../../../interfaces/EdaRole';
 import { IToolbarFilter, useSelectDialog } from '../../../../../framework';
 
@@ -11,7 +11,7 @@ export function useSelectRoles() {
   const tableColumns = useRoleColumns(false);
   const toolbarFilters = useRef<IToolbarFilter[]>([]);
   const view = useEdaView<EdaRole>({
-    url: `${API_PREFIX}/roles/`,
+    url: `${EDA_API_PREFIX}/roles/`,
     tableColumns,
     disableQueryString: true,
   });

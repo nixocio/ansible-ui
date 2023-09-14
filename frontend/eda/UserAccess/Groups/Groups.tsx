@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { RouteObj } from '../../../common/Routes';
-import { API_PREFIX } from '../../constants';
+import { EDA_API_PREFIX } from '../../constants';
 import { EdaGroup } from '../../interfaces/EdaGroup';
 import { useEdaView } from '../../useEventDrivenView';
 import { useGroupActions } from './hooks/useGroupActions';
@@ -16,7 +16,7 @@ export function Groups() {
   const toolbarFilters = useGroupFilters();
   const tableColumns = useGroupColumns();
   const view = useEdaView<EdaGroup>({
-    url: `${API_PREFIX}/groups/`,
+    url: `${EDA_API_PREFIX}/groups/`,
     toolbarFilters,
     tableColumns,
   });

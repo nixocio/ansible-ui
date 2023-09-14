@@ -5,7 +5,7 @@ import { PageHeader } from '../../../framework';
 import { PageDashboard } from '../../../framework/PageDashboard/PageDashboard';
 import { PageDashboardCard } from '../../../framework/PageDashboard/PageDashboardCard';
 import { RouteObj } from '../../common/Routes';
-import { API_PREFIX } from '../constants';
+import { EDA_API_PREFIX } from '../constants';
 import { EdaControllerToken } from '../interfaces/EdaControllerToken';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
 import { EdaProject } from '../interfaces/EdaProject';
@@ -21,31 +21,31 @@ import { EdaRulebookActivationsCard } from './cards/EdaRulebookActivationsCard';
 export function EdaDashboard() {
   const { t } = useTranslation();
   const edaProjectView = useEdaView<EdaProject>({
-    url: `${API_PREFIX}/projects/`,
+    url: `${EDA_API_PREFIX}/projects/`,
     queryParams: { page: '1', page_size: '10' },
     disableQueryString: true,
     defaultSort: 'modified_at',
     defaultSortDirection: 'desc',
   });
   const edaControllerTokenView = useEdaView<EdaControllerToken>({
-    url: `${API_PREFIX}/users/me/awx-tokens/`,
+    url: `${EDA_API_PREFIX}/users/me/awx-tokens/`,
     queryParams: { page: '1', page_size: '10' },
     disableQueryString: true,
     defaultSort: 'modified_at',
     defaultSortDirection: 'desc',
   });
   const edaDecisionEnvironmentView = useEdaView<EdaDecisionEnvironment>({
-    url: `${API_PREFIX}/decision-environments/`,
+    url: `${EDA_API_PREFIX}/decision-environments/`,
     queryParams: { page: '1', page_size: '10' },
     disableQueryString: true,
   });
   const edaRuleAuditView = useEdaView<EdaRuleAuditItem>({
-    url: `${API_PREFIX}/audit-rules/`,
+    url: `${EDA_API_PREFIX}/audit-rules/`,
     queryParams: { page: '1', page_size: '10' },
     disableQueryString: true,
   });
   const edaRulebookActivationView = useEdaView<EdaRulebookActivation>({
-    url: `${API_PREFIX}/activations/`,
+    url: `${EDA_API_PREFIX}/activations/`,
     queryParams: { page: '1', page_size: '10' },
     disableQueryString: true,
   });

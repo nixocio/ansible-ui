@@ -3,11 +3,11 @@ import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { EdaRuleAuditItem } from '../../interfaces/EdaRuleAudit';
 import { useRuleAuditColumns } from './hooks/useRuleAuditColumns';
 import { useRuleAuditFilters } from './hooks/useRuleAuditFilters';
-import { API_PREFIX } from '../../constants';
+import { EDA_API_PREFIX } from '../../constants';
 import { useEdaView } from '../../useEventDrivenView';
 import { CubesIcon } from '@patternfly/react-icons';
 
-const ruleAuditEndpoint = `${API_PREFIX}/audit-rules/`;
+const ruleAuditEndpoint = `${EDA_API_PREFIX}/audit-rules/`;
 
 export function RuleAudit() {
   const { t } = useTranslation();

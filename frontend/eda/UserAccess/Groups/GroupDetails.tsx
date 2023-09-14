@@ -16,7 +16,7 @@ import {
 import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { EdaRoute } from '../../EdaRoutes';
-import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
+import { EDA_API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaGroup } from '../../interfaces/EdaGroup';
 import { useDeleteGroups } from './hooks/useDeleteGroup';
 import { useGroupColumns } from './hooks/useGroupColumns';
@@ -25,9 +25,13 @@ export function GroupDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { data: group } = useGet<EdaGroup>(`${API_PREFIX}/groups/${params.id ?? ''}/`, undefined, {
-    refreshInterval: SWR_REFRESH_INTERVAL,
-  });
+  const { data: group } = useGet<EdaGroup>(
+    `${EDA_API_PREFIX}/groups/${params.id ?? ''}/`,
+    undefined,
+    {
+      refreshInterval: SWR_REFRESH_INTERVAL,
+    }
+  );
   const tableColumns = useGroupColumns();
 
   const deleteGroups = useDeleteGroups((deleted) => {

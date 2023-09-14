@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { requestDelete } from '../../../../common/crud/Data';
 import { idKeyFn } from '../../../../common/utils/nameKeyFn';
-import { API_PREFIX } from '../../../constants';
+import { EDA_API_PREFIX } from '../../../constants';
 import {
   EdaDecisionEnvironment,
   EdaDecisionEnvironmentRead,
@@ -40,7 +40,7 @@ export function useDeleteDecisionEnvironments(
         actionColumns,
         onComplete,
         actionFn: (decisionEnvironment: EdaDecisionEnvironmentRead) =>
-          requestDelete(`${API_PREFIX}/decision-environments/${decisionEnvironment.id}/`),
+          requestDelete(`${EDA_API_PREFIX}/decision-environments/${decisionEnvironment.id}/`),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]
@@ -74,7 +74,7 @@ export function useDeleteDecisionEnvironment(
         actionColumns,
         onComplete,
         actionFn: (decisionEnvironment: EdaDecisionEnvironmentRead) =>
-          requestDelete(`${API_PREFIX}/decision-environments/${decisionEnvironment.id}/`),
+          requestDelete(`${EDA_API_PREFIX}/decision-environments/${decisionEnvironment.id}/`),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]

@@ -16,7 +16,7 @@ import {
 import { formatDateString } from '../../../framework/utils/formatDateString';
 import { useGet } from '../../common/crud/useGet';
 import { EdaRoute } from '../EdaRoutes';
-import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
+import { EDA_API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
 import { EdaResult } from '../interfaces/EdaResult';
 import { EdaRulebook } from '../interfaces/EdaRulebook';
 import { EdaRuleset } from '../interfaces/EdaRuleset';
@@ -27,7 +27,7 @@ export function RulebookDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
   const { data: rulebook } = useGet<EdaRulebook>(
-    `${API_PREFIX}/rulebooks/${params.id ?? ''}/`,
+    `${EDA_API_PREFIX}/rulebooks/${params.id ?? ''}/`,
     undefined,
     { refreshInterval: SWR_REFRESH_INTERVAL }
   );
@@ -59,7 +59,7 @@ export function RulebookDetails() {
     const { t } = useTranslation();
     const toolbarFilters = useRulesetFilters();
     const { data: rulesets } = useGet<EdaResult<EdaRuleset>>(
-      `${API_PREFIX}/rulebooks/${params?.id || ''}/rulesets/`
+      `${EDA_API_PREFIX}/rulebooks/${params?.id || ''}/rulesets/`
     );
     const tableColumns = useRulesetColumns();
     const view = useInMemoryView<EdaRuleset>({

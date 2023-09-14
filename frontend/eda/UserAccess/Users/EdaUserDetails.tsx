@@ -31,14 +31,14 @@ import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { useEdaActiveUser } from '../../../common/useActiveUser';
 import { EdaRoute } from '../../EdaRoutes';
-import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
+import { EDA_API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaUser } from '../../interfaces/EdaUser';
 import { ControllerTokens } from './ControllerTokens';
 import { useDeleteUsers } from './hooks/useDeleteUser';
 
 export function EdaUserDetails({ initialTabIndex = 0 }) {
   const params = useParams<{ id: string }>();
-  const { data: user } = useGet<EdaUser>(`${API_PREFIX}/users/${params.id ?? ''}/`, undefined, {
+  const { data: user } = useGet<EdaUser>(`${EDA_API_PREFIX}/users/${params.id ?? ''}/`, undefined, {
     refreshInterval: SWR_REFRESH_INTERVAL,
   });
   if (!user) return <LoadingPage breadcrumbs tabs />;

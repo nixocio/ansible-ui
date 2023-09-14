@@ -21,7 +21,7 @@ import { requestGet } from '../../common/crud/Data';
 import { useGet } from '../../common/crud/useGet';
 import { usePostRequest } from '../../common/crud/usePostRequest';
 import { EdaProjectCell } from '../Resources/projects/components/EdaProjectCell';
-import { API_PREFIX } from '../constants';
+import { EDA_API_PREFIX } from '../constants';
 import { EdaDecisionEnvironment } from '../interfaces/EdaDecisionEnvironment';
 import { EdaExtraVars } from '../interfaces/EdaExtraVars';
 import { EdaProject } from '../interfaces/EdaProject';
@@ -48,14 +48,14 @@ export function CreateRulebookActivation() {
   }) => {
     let extra_var: { id: number } | undefined;
     if (variables && variables.trim().length > 0) {
-      extra_var = await postEdaExtraVars(`${API_PREFIX}/extra-vars/`, {
+      extra_var = await postEdaExtraVars(`${EDA_API_PREFIX}/extra-vars/`, {
         extra_var: variables,
       });
     }
     rulebookActivation.extra_var_id = extra_var?.id;
     rulebookActivation.rulebook_id = rulebook?.id;
     const newRulebookActivation = await postEdaRulebookActivation(
-      `${API_PREFIX}/activations/`,
+      `${EDA_API_PREFIX}/activations/`,
       rulebookActivation
     );
     navigate(
@@ -104,10 +104,10 @@ export function RulebookActivationInputs() {
     </>
   );
   const { data: projects } = useGet<EdaResult<EdaProject>>(
-    `${API_PREFIX}/projects/?page=1&page_size=200`
+    `${EDA_API_PREFIX}/projects/?page=1&page_size=200`
   );
   const { data: environments } = useGet<EdaResult<EdaDecisionEnvironment>>(
-    `${API_PREFIX}/decision-environments/?page=1&page_size=200`
+    `${EDA_API_PREFIX}/decision-environments/?page=1&page_size=200`
   );
 
   const RESTART_OPTIONS = [
@@ -123,8 +123,8 @@ export function RulebookActivationInputs() {
   const query = useCallback(async () => {
     const response = await requestGet<EdaResult<EdaRulebook>>(
       projectId !== undefined
-        ? `${API_PREFIX}/rulebooks/?project_id=${projectId}&page=1&page_size=200`
-        : `${API_PREFIX}/rulebooks/?page=1&page_size=200`
+        ? `${EDA_API_PREFIX}/rulebooks/?project_id=${projectId}&page=1&page_size=200`
+        : `${EDA_API_PREFIX}/rulebooks/?page=1&page_size=200`
     );
     return Promise.resolve({
       total: response.count,

@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { requestDelete } from '../../../../common/crud/Data';
 import { idKeyFn } from '../../../../common/utils/nameKeyFn';
-import { API_PREFIX } from '../../../constants';
+import { EDA_API_PREFIX } from '../../../constants';
 import { EdaInventory } from '../../../interfaces/EdaInventory';
 import { useInventoriesColumns } from './useInventoryColumns';
 
@@ -21,7 +21,7 @@ export function useDeleteInventories(onComplete: (inventories: EdaInventory[]) =
       items: items.sort((l, r) => compareStrings(l.name, r.name)),
       keyFn: idKeyFn,
       actionFn: (inventory: EdaInventory) =>
-        requestDelete(`${API_PREFIX}/inventory/${inventory.id}/`),
+        requestDelete(`${EDA_API_PREFIX}/inventory/${inventory.id}/`),
       confirmationColumns,
       actionColumns,
       onComplete,

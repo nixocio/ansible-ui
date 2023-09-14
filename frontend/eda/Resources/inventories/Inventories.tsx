@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
-import { API_PREFIX } from '../../constants';
+import { EDA_API_PREFIX } from '../../constants';
 import { EdaInventory } from '../../interfaces/EdaInventory';
 import { useEdaView } from '../../useEventDrivenView';
 import { useInventoriesColumns } from './hooks/useInventoryColumns';
@@ -13,7 +13,7 @@ export function Inventories() {
   const toolbarFilters = useInventoriesFilters();
   const tableColumns = useInventoriesColumns();
   const view = useEdaView<EdaInventory>({
-    url: `${API_PREFIX}/inventories/`,
+    url: `${EDA_API_PREFIX}/inventories/`,
     toolbarFilters,
     tableColumns,
   });

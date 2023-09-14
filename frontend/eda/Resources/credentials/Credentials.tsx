@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { RouteObj } from '../../../common/Routes';
-import { API_PREFIX } from '../../constants';
+import { EDA_API_PREFIX } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
 import { useEdaView } from '../../useEventDrivenView';
 import { useCredentialActions } from './hooks/useCredentialActions';
@@ -16,7 +16,7 @@ export function Credentials() {
   const toolbarFilters = useCredentialFilters();
   const tableColumns = useCredentialColumns();
   const view = useEdaView<EdaCredential>({
-    url: `${API_PREFIX}/credentials/`,
+    url: `${EDA_API_PREFIX}/credentials/`,
     toolbarFilters,
     tableColumns,
   });

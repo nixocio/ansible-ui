@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../../framework';
 import { RouteObj } from '../../../common/Routes';
-import { API_PREFIX } from '../../constants';
+import { EDA_API_PREFIX } from '../../constants';
 import { EdaUser } from '../../interfaces/EdaUser';
 import { useEdaView } from '../../useEventDrivenView';
 import { useUserActions } from './hooks/useUserActions';
@@ -14,7 +14,7 @@ export function Users() {
   const navigate = useNavigate();
   const tableColumns = useUserColumns();
   const view = useEdaView<EdaUser>({
-    url: `${API_PREFIX}/users/`,
+    url: `${EDA_API_PREFIX}/users/`,
     tableColumns,
   });
   const toolbarActions = useUsersActions(view);

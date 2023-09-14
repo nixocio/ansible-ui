@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader, PageLayout, PageTable } from '../../../framework';
 import { RouteObj } from '../../common/Routes';
-import { API_PREFIX } from '../constants';
+import { EDA_API_PREFIX } from '../constants';
 import { EdaRule } from '../interfaces/EdaRule';
 import { useEdaView } from '../useEventDrivenView';
 import { useRuleColumns } from './hooks/useRuleColumns';
@@ -14,7 +14,7 @@ export function Rules() {
   const toolbarFilters = useRuleFilters();
   const tableColumns = useRuleColumns();
   const view = useEdaView<EdaRule>({
-    url: `${API_PREFIX}/rules/`,
+    url: `${EDA_API_PREFIX}/rules/`,
     tableColumns,
     toolbarFilters,
   });

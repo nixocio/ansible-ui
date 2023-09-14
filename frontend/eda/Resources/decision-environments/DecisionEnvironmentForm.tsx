@@ -15,7 +15,7 @@ import { useGet } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { EdaRoute } from '../../EdaRoutes';
-import { API_PREFIX } from '../../constants';
+import { EDA_API_PREFIX } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
 import {
   EdaDecisionEnvironment,
@@ -25,7 +25,7 @@ import { EdaResult } from '../../interfaces/EdaResult';
 
 function DecisionEnvironmentInputs() {
   const { t } = useTranslation();
-  const { data: credentials } = useGet<EdaResult<EdaCredential>>(`${API_PREFIX}/credentials/`);
+  const { data: credentials } = useGet<EdaResult<EdaCredential>>(`${EDA_API_PREFIX}/credentials/`);
   const imageHelpBlock = (
     <>
       <p>
@@ -93,7 +93,7 @@ export function CreateDecisionEnvironment() {
 
   const onSubmit: PageFormSubmitHandler<EdaDecisionEnvironment> = async (decisionEnvironment) => {
     const newDecisionEnvironment = await postRequest(
-      `${API_PREFIX}/decision-environments/`,
+      `${EDA_API_PREFIX}/decision-environments/`,
       decisionEnvironment
     );
     (cache as unknown as { clear: () => void }).clear?.();
@@ -130,13 +130,13 @@ export function EditDecisionEnvironment() {
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const { data: decisionEnvironment } = useGet<EdaDecisionEnvironmentRead>(
-    `${API_PREFIX}/decision-environments/${id.toString()}/`
+    `${EDA_API_PREFIX}/decision-environments/${id.toString()}/`
   );
   const { cache } = useSWRConfig();
   const patchRequest = usePatchRequest<Partial<EdaDecisionEnvironment>, EdaDecisionEnvironment>();
 
   const onSubmit: PageFormSubmitHandler<EdaDecisionEnvironment> = async (decisionEnvironment) => {
-    await patchRequest(`${API_PREFIX}/decision-environments/${id}/`, decisionEnvironment);
+    await patchRequest(`${EDA_API_PREFIX}/decision-environments/${id}/`, decisionEnvironment);
     (cache as unknown as { clear: () => void }).clear?.();
     navigate(-1);
   };

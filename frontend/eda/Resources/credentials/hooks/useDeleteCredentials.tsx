@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { compareStrings, useBulkConfirmation } from '../../../../../framework';
 import { requestDelete } from '../../../../common/crud/Data';
 import { idKeyFn } from '../../../../common/utils/nameKeyFn';
-import { API_PREFIX } from '../../../constants';
+import { EDA_API_PREFIX } from '../../../constants';
 import { EdaCredential } from '../../../interfaces/EdaCredential';
 import { useCredentialColumns } from './useCredentialColumns';
 
@@ -27,7 +27,7 @@ export function useDeleteCredentials(onComplete: (credentials: EdaCredential[]) 
         actionColumns,
         onComplete,
         actionFn: (credential: EdaCredential) =>
-          requestDelete(`${API_PREFIX}/credentials/${credential.id}/`),
+          requestDelete(`${EDA_API_PREFIX}/credentials/${credential.id}/`),
       });
     },
     [actionColumns, bulkAction, confirmationColumns, onComplete, t]

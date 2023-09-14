@@ -26,7 +26,7 @@ import { formatDateString } from '../../../../framework/utils/formatDateString';
 import { RouteObj } from '../../../common/Routes';
 import { useGet } from '../../../common/crud/useGet';
 import { EdaRoute } from '../../EdaRoutes';
-import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
+import { EDA_API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaCredential } from '../../interfaces/EdaCredential';
 import { CredentialOptions } from './EditCredential';
 import { useDeleteCredentials } from './hooks/useDeleteCredentials';
@@ -46,7 +46,7 @@ export function CredentialDetails() {
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: credential } = useGet<EdaCredential>(
-    `${API_PREFIX}/credentials/${params.id ?? ''}/`,
+    `${EDA_API_PREFIX}/credentials/${params.id ?? ''}/`,
     undefined,
     { refreshInterval: SWR_REFRESH_INTERVAL }
   );

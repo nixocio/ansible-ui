@@ -14,7 +14,7 @@ import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
 import { EdaRoute } from '../../EdaRoutes';
-import { API_PREFIX } from '../../constants';
+import { EDA_API_PREFIX } from '../../constants';
 import { EdaRole } from '../../interfaces/EdaRole';
 
 export function EditRole() {
@@ -22,7 +22,7 @@ export function EditRole() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: Role } = useGet<EdaRole>(`${API_PREFIX}/roles/${id.toString()}/`);
+  const { data: Role } = useGet<EdaRole>(`${EDA_API_PREFIX}/roles/${id.toString()}/`);
 
   useInvalidateCacheOnUnmount();
 
@@ -31,10 +31,10 @@ export function EditRole() {
 
   const onSubmit: PageFormSubmitHandler<EdaRole> = async (Role) => {
     if (Number.isInteger(id)) {
-      Role = await patchRequest(`${API_PREFIX}/roles/${id}/`, Role);
+      Role = await patchRequest(`${EDA_API_PREFIX}/roles/${id}/`, Role);
       navigate(-1);
     } else {
-      const newRole = await postRequest(`${API_PREFIX}/roles/`, Role);
+      const newRole = await postRequest(`${EDA_API_PREFIX}/roles/`, Role);
       navigate(RouteObj.EdaRoleDetails.replace(':id', newRole.id.toString()));
     }
   };

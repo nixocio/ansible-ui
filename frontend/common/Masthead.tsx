@@ -39,11 +39,12 @@ import { mutate } from 'swr';
 import { useBreakpoint, usePageNavSideBar, useSettingsDialog } from '../../framework';
 import { useAwxConfig } from '../awx/common/useAwxConfig';
 import getDocsBaseUrl from '../awx/common/util/getDocsBaseUrl';
-import { API_PREFIX } from '../eda/constants';
+import { EDA_API_PREFIX } from '../eda/constants';
 import { useAnsibleAboutModal } from './AboutModal';
 import { RouteObj } from './Routes';
 import { postRequest } from './crud/Data';
 import { useActiveUser } from './useActiveUser';
+import { getBaseAPIPath } from '../hub/api/utils';
 
 const MastheadBrandDiv = styled.div`
   display: flex;
@@ -72,6 +73,9 @@ const ToolbarSpan = styled.span`
 
 function isEdaServer(): boolean {
   return process.env.UI_MODE === 'EDA';
+}
+function isHUBServer(): boolean {
+  return process.env.UI_MODE === 'HUB';
 }
 
 export function AnsibleMasthead(props: { hideLogin?: boolean }) {
@@ -332,9 +336,13 @@ function AccountDropdownInternal() {
           key="logout"
           onClick={() => {
             async function logout() {
-              isEdaServer()
-                ? await postRequest(`${API_PREFIX}/auth/session/logout/`, {})
-                : await fetch('/api/logout/');
+              if (isHUBServer()) {
+                await postRequest(`${getBaseAPIPath()}/_ui/v1/auth/logout/`, {});
+              } else if (isEdaServer()) {
+                await postRequest(`${EDA_API_PREFIX}/auth/session/logout/`, {});
+              } else {
+                await fetch('/api/logout/');
+              }
               navigate('/login');
             }
             void logout();

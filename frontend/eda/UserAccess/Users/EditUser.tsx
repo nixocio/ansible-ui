@@ -15,7 +15,7 @@ import { useGet } from '../../../common/crud/useGet';
 import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { EdaRoute } from '../../EdaRoutes';
-import { API_PREFIX } from '../../constants';
+import { EDA_API_PREFIX } from '../../constants';
 import { EdaResult } from '../../interfaces/EdaResult';
 import { EdaRole, EdaRoleRef } from '../../interfaces/EdaRole';
 import { EdaUser, EdaUserCreateUpdate } from '../../interfaces/EdaUser';
@@ -40,7 +40,7 @@ export function CreateUser() {
       ...user,
       roles: roles?.map((role) => role.id) ?? [],
     };
-    const newUser = await postRequest(`${API_PREFIX}/users/`, createUser);
+    const newUser = await postRequest(`${EDA_API_PREFIX}/users/`, createUser);
     navigate(RouteObj.EdaUserDetails.replace(':id', newUser.id.toString()));
   };
 
@@ -73,8 +73,8 @@ export function EditUser() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: user } = useGet<EdaUser>(`${API_PREFIX}/users/${id.toString()}/`);
-  const { data: rolesResult } = useGet<EdaResult<EdaRole>>(`${API_PREFIX}/roles/`);
+  const { data: user } = useGet<EdaUser>(`${EDA_API_PREFIX}/users/${id.toString()}/`);
+  const { data: rolesResult } = useGet<EdaResult<EdaRole>>(`${EDA_API_PREFIX}/roles/`);
   const roles = rolesResult?.results;
   const patchRequest = usePatchRequest<EdaUserCreateUpdate, EdaUser>();
   const onSubmit: PageFormSubmitHandler<UserInput> = async (
@@ -90,7 +90,7 @@ export function EditUser() {
       }
     }
     const editUser: EdaUserCreateUpdate = { ...user, roles: roles?.map((role) => role.id) ?? [] };
-    const updatedUser = await patchRequest(`${API_PREFIX}/users/${id}/`, editUser);
+    const updatedUser = await patchRequest(`${EDA_API_PREFIX}/users/${id}/`, editUser);
     navigate(RouteObj.EdaUserDetails.replace(':id', updatedUser.id.toString()));
   };
 

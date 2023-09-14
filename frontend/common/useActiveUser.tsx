@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { AwxItemsResponse } from '../awx/common/AwxItemsResponse';
 import { User } from '../awx/interfaces/User';
-import { API_PREFIX } from '../eda/constants';
+import { EDA_API_PREFIX } from '../eda/constants';
 import { EdaUser } from '../eda/interfaces/EdaUser';
 import { useGet } from './crud/useGet';
 
@@ -38,7 +38,7 @@ export function ActiveUserProvider(props: { children?: ReactNode }) {
 
 export function ActiveEdaUserProvider(props: { children?: ReactNode }) {
   const [activeUser, setActiveUser] = useState<EdaUser | null | undefined>(undefined);
-  const userResponse = useGet<EdaUser>(`${API_PREFIX}/users/me/`);
+  const userResponse = useGet<EdaUser>(`${EDA_API_PREFIX}/users/me/`);
   useEffect(() => {
     if (userResponse.data) {
       setActiveUser(userResponse.data ?? null);

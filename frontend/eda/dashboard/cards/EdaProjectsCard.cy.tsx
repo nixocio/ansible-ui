@@ -1,11 +1,11 @@
 import { RouteObj } from '../../../common/Routes';
-import { API_PREFIX } from '../../constants';
+import { EDA_API_PREFIX } from '../../constants';
 import { EdaDashboard } from '../EdaDashboard';
 
 describe('EdaProjectsCard.cy.ts', () => {
   beforeEach(() => {
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/projects/*` },
+      { method: 'GET', url: `${EDA_API_PREFIX}/projects/*` },
       {
         count: 1,
         next: null,
@@ -31,28 +31,28 @@ describe('EdaProjectsCard.cy.ts', () => {
     );
 
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/activations/*` },
+      { method: 'GET', url: `${EDA_API_PREFIX}/activations/*` },
       {
         count: 0,
         results: [],
       }
     );
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/decision-environments/*` },
+      { method: 'GET', url: `${EDA_API_PREFIX}/decision-environments/*` },
       {
         count: 0,
         results: [],
       }
     );
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/audit-rules/*` },
+      { method: 'GET', url: `${EDA_API_PREFIX}/audit-rules/*` },
       {
         count: 0,
         results: [],
       }
     );
     cy.intercept(
-      { method: 'GET', url: `${API_PREFIX}/audit-rules/` },
+      { method: 'GET', url: `${EDA_API_PREFIX}/audit-rules/` },
       {
         count: 0,
         results: [],

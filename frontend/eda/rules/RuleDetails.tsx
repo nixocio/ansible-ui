@@ -24,14 +24,14 @@ import { useGet } from '../../common/crud/useGet';
 import { EdaRoute } from '../EdaRoutes';
 import { EdaProjectCell } from '../Resources/projects/components/EdaProjectCell';
 import { PageDetailsSection } from '../common/PageDetailsSection';
-import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
+import { EDA_API_PREFIX, SWR_REFRESH_INTERVAL } from '../constants';
 import { EdaRule } from '../interfaces/EdaRule';
 import { EdaRulebookCell } from '../rulebooks/components/EdaRulebookCell';
 
 export function RuleDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: rule } = useGet<EdaRule>(`${API_PREFIX}/rules/${params.id ?? ''}/`, undefined, {
+  const { data: rule } = useGet<EdaRule>(`${EDA_API_PREFIX}/rules/${params.id ?? ''}/`, undefined, {
     refreshInterval: SWR_REFRESH_INTERVAL,
   });
   const [copied, setCopied] = React.useState(false);

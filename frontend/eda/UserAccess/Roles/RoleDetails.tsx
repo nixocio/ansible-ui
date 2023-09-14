@@ -19,13 +19,13 @@ import {
 } from '../../../../framework';
 import { useGet } from '../../../common/crud/useGet';
 import { EdaRoute } from '../../EdaRoutes';
-import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
+import { EDA_API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaRole } from '../../interfaces/EdaRole';
 
 export function RoleDetails() {
   const { t } = useTranslation();
   const params = useParams<{ id: string }>();
-  const { data: role } = useGet<EdaRole>(`${API_PREFIX}/roles/${params.id ?? ''}/`, undefined, {
+  const { data: role } = useGet<EdaRole>(`${EDA_API_PREFIX}/roles/${params.id ?? ''}/`, undefined, {
     refreshInterval: SWR_REFRESH_INTERVAL,
   });
   const ResourceTypes = {

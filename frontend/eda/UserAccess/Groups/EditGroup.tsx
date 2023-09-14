@@ -14,7 +14,7 @@ import { usePatchRequest } from '../../../common/crud/usePatchRequest';
 import { usePostRequest } from '../../../common/crud/usePostRequest';
 import { useInvalidateCacheOnUnmount } from '../../../common/useInvalidateCache';
 import { EdaRoute } from '../../EdaRoutes';
-import { API_PREFIX } from '../../constants';
+import { EDA_API_PREFIX } from '../../constants';
 import { EdaGroup } from '../../interfaces/EdaGroup';
 
 export function EditGroup() {
@@ -22,7 +22,7 @@ export function EditGroup() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data: Group } = useGet<EdaGroup>(`${API_PREFIX}/groups/${id.toString()}/`);
+  const { data: Group } = useGet<EdaGroup>(`${EDA_API_PREFIX}/groups/${id.toString()}/`);
 
   useInvalidateCacheOnUnmount();
 
@@ -31,10 +31,10 @@ export function EditGroup() {
 
   const onSubmit: PageFormSubmitHandler<EdaGroup> = async (Group) => {
     if (Number.isInteger(id)) {
-      Group = await patchRequest(`${API_PREFIX}/groups/${id}/`, Group);
+      Group = await patchRequest(`${EDA_API_PREFIX}/groups/${id}/`, Group);
       navigate(-1);
     } else {
-      const newGroup = await postRequest(`${API_PREFIX}/groups/`, Group);
+      const newGroup = await postRequest(`${EDA_API_PREFIX}/groups/`, Group);
       navigate(RouteObj.EdaGroupDetails.replace(':id', newGroup.id.toString()));
     }
   };

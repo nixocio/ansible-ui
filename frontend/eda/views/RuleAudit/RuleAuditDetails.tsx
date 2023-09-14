@@ -19,7 +19,7 @@ import { RouteObj } from '../../../common/Routes';
 import { StatusCell } from '../../../common/Status';
 import { useGet } from '../../../common/crud/useGet';
 import { EdaRoute } from '../../EdaRoutes';
-import { API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
+import { EDA_API_PREFIX, SWR_REFRESH_INTERVAL } from '../../constants';
 import { EdaRuleAudit } from '../../interfaces/EdaRuleAudit';
 import { EdaRuleAuditAction } from '../../interfaces/EdaRuleAuditAction';
 import { EdaRuleAuditEvent } from '../../interfaces/EdaRuleAuditEvent';
@@ -34,7 +34,7 @@ export function RuleAuditDetails() {
   const params = useParams<{ id: string }>();
 
   const { data: ruleAudit } = useGet<EdaRuleAudit>(
-    `${API_PREFIX}/audit-rules/${params.id ?? ''}/`,
+    `${EDA_API_PREFIX}/audit-rules/${params.id ?? ''}/`,
     undefined,
     { refreshInterval: SWR_REFRESH_INTERVAL }
   );
@@ -87,7 +87,7 @@ export function RuleAuditDetails() {
     const tableColumns = useRuleAuditActionsColumns();
 
     const view = useEdaView<EdaRuleAuditAction>({
-      url: `${API_PREFIX}/audit-rules/${params?.id || ''}/actions/`,
+      url: `${EDA_API_PREFIX}/audit-rules/${params?.id || ''}/actions/`,
       tableColumns,
       toolbarFilters,
     });
@@ -112,7 +112,7 @@ export function RuleAuditDetails() {
     const toolbarFilters = useRuleAuditEventsFilters();
     const tableColumns = useRuleAuditEventsColumns();
     const view = useEdaView<EdaRuleAuditEvent>({
-      url: `${API_PREFIX}/audit-rules/${params?.id || ''}/events/`,
+      url: `${EDA_API_PREFIX}/audit-rules/${params?.id || ''}/events/`,
       tableColumns,
       toolbarFilters,
     });
